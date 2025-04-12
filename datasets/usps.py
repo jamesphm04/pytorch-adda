@@ -117,10 +117,7 @@ class USPS(data.Dataset):
 def get_usps(train):
     """Get USPS dataset loader."""
     # image pre-processing
-    pre_process = transforms.Compose([transforms.ToTensor(),
-                                      transforms.Normalize(
-                                          mean=params.dataset_mean,
-                                          std=params.dataset_std)])
+    pre_process = transforms.Compose([transforms.ToTensor()])
 
     # dataset and data loader
     usps_dataset = USPS(root=params.data_root,

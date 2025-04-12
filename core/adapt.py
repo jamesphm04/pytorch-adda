@@ -8,6 +8,7 @@ from torch import nn
 
 import params
 from utils import make_variable
+from tqdm import tqdm
 
 
 def train_tgt(src_encoder, tgt_encoder, critic,
@@ -35,7 +36,7 @@ def train_tgt(src_encoder, tgt_encoder, critic,
     # 2. train network #
     ####################
 
-    for epoch in range(params.num_epochs):
+    for epoch in tqdm(range(params.num_epochs)):
         # zip source and target data pair
         data_zip = enumerate(zip(src_data_loader, tgt_data_loader))
         for step, ((images_src, _), (images_tgt, _)) in data_zip:
@@ -107,13 +108,17 @@ def train_tgt(src_encoder, tgt_encoder, critic,
                               params.num_epochs,
                               step + 1,
                               len_data_loader,
-                              loss_critic.data[0],
-                              loss_tgt.data[0],
-                              acc.data[0]))
+                              loss_critic.item(),
+                              loss_tgt.item(),
+                              acc.item()))
 
         #############################
         # 2.4 save model parameters #
         #############################
+        # create model_root if not exists
+        if not os.path.exists(params.model_root):
+            os.makedirs(params.model_root)
+        
         if ((epoch + 1) % params.save_step == 0):
             torch.save(critic.state_dict(), os.path.join(
                 params.model_root,

@@ -8,20 +8,20 @@ import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 
 import params
-from datasets import get_mnist, get_usps
+from datasets import get_mnist, get_usps, get_source, get_target
 
 
 def make_variable(tensor, volatile=False):
     """Convert Tensor to Variable."""
-    if torch.cuda.is_available():
-        tensor = tensor.cuda()
+    # if torch.cuda.is_available():
+    #     tensor = tensor.cuda()
     return Variable(tensor, volatile=volatile)
 
 
 def make_cuda(tensor):
     """Use CUDA if it's available."""
-    if torch.cuda.is_available():
-        tensor = tensor.cuda()
+    # if torch.cuda.is_available():
+    #     tensor = tensor.cuda()
     return tensor
 
 
@@ -51,8 +51,8 @@ def init_random_seed(manual_seed):
     print("use random seed: {}".format(seed))
     random.seed(seed)
     torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
+    # if torch.cuda.is_available():
+    #     torch.cuda.manual_seed_all(seed)
 
 
 def get_data_loader(name, train=True):
@@ -61,23 +61,27 @@ def get_data_loader(name, train=True):
         return get_mnist(train)
     elif name == "USPS":
         return get_usps(train)
+    elif name == "source":
+        return get_source()
+    elif name == "target":
+        return get_target()
 
 
-def init_model(net, restore):
+def init_model(net):
     """Init models with cuda and weights."""
     # init weights of model
-    net.apply(init_weights)
+    # net.apply(init_weights)
 
-    # restore model weights
-    if restore is not None and os.path.exists(restore):
-        net.load_state_dict(torch.load(restore))
-        net.restored = True
-        print("Restore model from: {}".format(os.path.abspath(restore)))
+    # # restore model weights
+    # if restore is not None and os.path.exists(restore):
+    #     net.load_state_dict(torch.load(restore))
+    #     net.restored = True
+    #     print("Restore model from: {}".format(os.path.abspath(restore)))
 
     # check if cuda is available
-    if torch.cuda.is_available():
-        cudnn.benchmark = True
-        net.cuda()
+    # if torch.cuda.is_available():
+    #     cudnn.benchmark = True
+    #     net.cuda()
 
     return net
 
